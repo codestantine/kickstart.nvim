@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -144,17 +144,17 @@ vim.opt.splitbelow = true
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
-vim.opt.list = true
+vim.opt.list = false
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+-- vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 5
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -175,10 +175,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "You don\'t belong here"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "You don\'t belong here"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "You don\'t belong here"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "You don\'t belong here"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -590,14 +590,14 @@ require('lazy').setup({
       })
 
       -- Change diagnostic symbols in the sign column (gutter)
-      -- if vim.g.have_nerd_font then
-      --   local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
-      --   local diagnostic_signs = {}
-      --   for type, icon in pairs(signs) do
-      --     diagnostic_signs[vim.diagnostic.severity[type]] = icon
-      --   end
-      --   vim.diagnostic.config { signs = { text = diagnostic_signs } }
-      -- end
+      if vim.g.have_nerd_font then
+        local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
+        local diagnostic_signs = {}
+        for type, icon in pairs(signs) do
+          diagnostic_signs[vim.diagnostic.severity[type]] = icon
+        end
+        vim.diagnostic.config { signs = { text = diagnostic_signs } }
+      end
 
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
@@ -626,8 +626,9 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {},
         --
+        ruby_lsp = {},
 
         lua_ls = {
           -- cmd = { ... },
@@ -714,10 +715,13 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'ruff', 'black' },
+        go = { 'crlfmt' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettier' },
+        css = { 'prettier' },
       },
     },
   },
@@ -742,12 +746,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -849,7 +853,8 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'tokyonight-storm'
+      vim.cmd.colorscheme 'vscode'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -931,18 +936,18 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -972,3 +977,519 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- The line beneath this is called `modeline`. See `:help modeline`
+-- vim: ts=2 sts=2 sw=2 et
+-- for Go (CHATGPT)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
+  callback = function()
+    vim.opt_local.expandtab = false
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+  end,
+})
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'c',
+  callback = function()
+    vim.opt_local.expandtab = true
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+  end,
+})
+
+-- for running from nvim
+-- Function to compile and run C files
+function RunC()
+  local filename = vim.fn.expand '%:r'
+  local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+
+  -- Quote the output filename as well to handle spaces
+  local quoted_output = string.format('"%s"', filename)
+
+  -- Compile the C file with the quoted file path
+  vim.cmd(string.format('!gcc %s -o %s', quoted_filepath, quoted_output))
+
+  -- Run the compiled executable
+  vim.cmd(string.format('!%s', quoted_output))
+end
+
+-- Function to compile and run C++ files
+function RunCpp()
+  local filename = vim.fn.expand '%:r'
+  local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+
+  -- Quote the output filename as well to handle spaces
+  local quoted_output = string.format('"%s"', filename)
+
+  -- Compile the C++ file with the quoted file path
+  vim.cmd(string.format('!g++ %s -o %s', quoted_filepath, quoted_output))
+
+  -- Run the compiled executable
+  vim.cmd(string.format('!%s', quoted_output))
+end
+
+-- Function to run Python files
+function RunPython()
+  local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+
+  -- Run the Python file with the quoted file path
+  vim.cmd(string.format('!python3 %s', quoted_filepath))
+end
+
+-- -- Function to run Ruby files
+-- function RunRuby()
+--   local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+--
+--   -- Run the Ruby file with the quoted file path
+--   vim.cmd(string.format('!ruby %s', quoted_filepath))
+-- end
+
+-- Bind the function to a key combination for easy access
+vim.api.nvim_set_keymap('n', '<leader>0w', ':lua RunRuby()<CR>', { noremap = true, silent = true })
+
+-- Function to compile and run Go files
+function RunGo()
+  local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+
+  -- Run the Go file with the quoted file path
+  vim.cmd(string.format('!go run %s', quoted_filepath))
+end
+
+-- Function to compile and run Go projects from anywhere
+function RunGoProject()
+  -- Get the current file path
+  local file_dir = vim.fn.expand '%:p:h'
+
+  -- Traverse up directories to find the go.mod file
+  local project_dir = file_dir
+  while project_dir ~= '/' do
+    if vim.fn.filereadable(project_dir .. '/go.mod') == 1 then
+      break
+    end
+    project_dir = vim.fn.fnamemodify(project_dir, ':h')
+  end
+
+  if project_dir == '/' then
+    print 'go.mod not found in any parent directory'
+    return
+  end
+
+  -- Change to the project directory
+  vim.cmd('lcd ' .. project_dir)
+
+  -- Run the Go project
+  vim.cmd '!go run .'
+end
+
+-- Bind <C-_>gp to run Go projects
+vim.api.nvim_set_keymap('n', '<leader>08', ':lua RunGoProject()<CR>', { noremap = true, silent = true })
+
+-- Function to run Node.js files
+function RunNode()
+  -- Quote the file path to handle spaces
+  local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+
+  -- Run the Node.js file with the quoted file path
+  vim.cmd(string.format('!node %s', quoted_filepath))
+end
+
+-- -- Function to run .js files using Deno
+-- function RunDeno()
+--   -- Quote the file path to handle spaces
+--   local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+--
+--   -- Run the Node.js file with the quoted file path
+--   vim.cmd(string.format('!deno run %s', quoted_filepath))
+-- end
+
+-- -- Function to run Bun files
+-- function RunBun()
+--   -- Define the Bun executable path
+--   local bun_path = '/home/amir/.bun/bin/bun'
+--
+--   -- Quote the file path to handle spaces
+--   local quoted_filepath = string.format('"%s"', vim.fn.expand '%')
+--
+--   -- Run the Bun file with the quoted file path
+--   vim.cmd(string.format('!%s %s', bun_path, quoted_filepath))
+-- end
+
+-- Function to compile and run Rust files
+function RunRust()
+  local filepath = vim.fn.expand '%'
+  local filename = vim.fn.expand '%:t:r' -- Extract filename without extension
+
+  -- Quote the file path to handle spaces
+  local quoted_filepath = string.format('"%s"', filepath)
+
+  -- Compile the Rust file with the quoted file path
+  vim.cmd(string.format('!rustc %s && ./%s', quoted_filepath, filename))
+end
+
+-- -- Function to compile and run Java files
+-- function RunJava()
+--   local filepath = vim.fn.expand '%:p'
+--   local filename = vim.fn.expand '%:t:r'
+--   local package_path = filepath:match('.*/main/java/(.*)/' .. filename .. '.java')
+--   local class_with_package = package_path:gsub('/', '.') .. '.' .. filename
+--
+--   -- Compile the Java file
+--   vim.cmd('!javac ' .. filepath)
+--
+--   -- Run the Java class with the package name
+--   vim.cmd('!java ' .. class_with_package)
+-- end
+--
+-- Function to run Lua files
+function RunLua()
+  vim.cmd '!lua %'
+end
+
+-- Function to compile and run Zig files
+function RunZig()
+  local filename = vim.fn.expand '%:r'
+  vim.cmd('!zig run ' .. filename .. '.zig')
+end
+
+-- Function to run Bash files
+function RunBash()
+  vim.cmd '!bash %'
+end
+
+-- Keybindings
+-- vim.api.nvim_set_keymap('n', '<leader>0j', ':lua RunJava()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>0l', ':lua RunLua()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>0z', ':lua RunZig()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>01', ':lua RunBash()<CR>', { noremap = true, silent = true })
+
+-- Keybindings
+vim.api.nvim_set_keymap('n', '<leader>0c', ':lua RunC()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>00', ':lua RunCpp()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>09', ':lua RunPython()<CR>', { noremap = true, silent = true })
+
+-- Keybindings
+vim.api.nvim_set_keymap('n', '<leader>0g', ':lua RunGo()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>0n', ':lua RunNode()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>0r', ':lua RunRust()<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>0b', ':lua RunBun()<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<leader>0d', ':lua RunDeno()<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '\\', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+
+-- Map "jj" to exit insert mode
+vim.api.nvim_set_keymap('i', 'jj', '<Esc>', { noremap = true, silent = true })
+-- Map "jk" to exit insert mode and then re-enter insert mode
+vim.api.nvim_set_keymap('i', 'jk', '<Esc>a', { noremap = true, silent = true })
+
+-- Define the Lua function to execute :e!
+function Reload_file()
+  vim.cmd 'e!'
+end
+
+-- Map <Leader>r to the Lua function
+vim.api.nvim_set_keymap('n', '<Leader>zz', ':lua Reload_file()<CR>', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+-- vim.keymap.set('n', '<leader>e', function()
+--   vim.diagnostic.open_float(nil, { focus = false, scope = 'line' })
+-- end, { desc = 'Show diagnostic [E]rror messages' })
+
+-- vim.api.nvim_create_autocmd('VimEnter', {
+--   callback = function()
+--     -- vim.cmd.colorscheme 'onedark'
+--     vim.cmd.colorscheme 'tokyonight-storm'
+--   end,
+--   desc = 'Load xcodedarkhc colorscheme on VimEnter',
+-- })
+
+-- this is copied from old config it is not in Kickstart
+local keymap = vim.keymap
+
+-- Do not yank with x
+-- keymap.set('n', 'x', '"_x')
+
+-- Increment/decrement
+-- keymap.set('n','+','<C-a>')
+-- keymap.set('n','-','<C-x>')
+
+-- Delete a word backwards
+-- keymap.set('n', 'dw', 'vb"_d')
+
+-- Select all
+-- keymap.set('n', '<C-a>', 'gg<S-v>G')
+
+-- New tab
+keymap.set('n', 'te', ':tabedit<Return>', { silent = true })
+-- Split window
+keymap.set('n', 'ss', ':split<Return><C-w>w', { silent = true })
+keymap.set('n', 'sv', ':vsplit<Return><C-w>w', { silent = true })
+
+-- easy
+--
+--
+-- start of python
+-- start of func
+-- Define a global Lua function for printing variables/expressions in Python
+function _G.print_variable_python()
+  -- Prompt the user for input
+  local input = vim.fn.input 'Variable/Expression to print: '
+
+  -- Escape single and double quotes to prevent syntax errors in the print statement
+  local escaped_input = input:gsub('"', '\\"'):gsub("'", "\\'")
+
+  -- Determine the print statement
+  local print_statement = 'print(f"' .. escaped_input .. ': {' .. input .. '}")'
+
+  -- Get the current cursor position
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local row, _ = cursor_pos[1], cursor_pos[2]
+
+  -- Insert a new line above the current line and add the print statement
+  vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { print_statement })
+
+  -- Move the cursor to the end of the inserted print statement
+  vim.api.nvim_win_set_cursor(0, { row, #print_statement })
+end
+
+-- Map the function to <leader>gpv (leader + g + p + v) for Python
+vim.api.nvim_set_keymap('n', '<leader>gpv', ':lua _G.print_variable_python()<CR>', { noremap = true, silent = true })
+---end of func-----
+---end of python
+
+-- start of go
+-- start of func Go
+-- Define a global Lua function for printing variables/expressions in Go
+function _G.print_variable_go()
+  -- Prompt the user for input
+  local input = vim.fn.input 'Variable/Expression to print: '
+
+  -- Escape double quotes to prevent syntax errors in the print statement
+  local escaped_input = input:gsub('"', '\\"')
+
+  -- Determine the print statement
+  local print_statement
+  if input:match '[+%-*/%%]' or input:match '"%s*..%s*"' then
+    -- If the input contains an operator or string concatenation, use fmt.Println
+    print_statement = 'fmt.Println("' .. escaped_input .. ': ", ' .. input .. ')'
+  else
+    -- Otherwise, use fmt.Printf for simple variables
+    print_statement = 'fmt.Printf("' .. escaped_input .. ': %v\\n", ' .. input .. ')'
+  end
+
+  -- Get the current cursor position
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local row, _ = cursor_pos[1], cursor_pos[2]
+
+  -- Insert a new line above the current line and add the print statement
+  vim.api.nvim_buf_set_lines(0, row - 1, row - 1, false, { print_statement })
+
+  -- Move the cursor to the end of the inserted print statement
+  vim.api.nvim_win_set_cursor(0, { row, #print_statement })
+end
+
+-- Map the function to <leader>ggv (leader + g + g + v) for Go
+vim.api.nvim_set_keymap('n', '<leader>ggv', ':lua _G.print_variable_go()<CR>', { noremap = true, silent = true })
+--- end of func
+--- start of func
+-- Define a global Lua function for Go error handling
+function _G.go_error_handling()
+  -- Prompt for the variable name
+  local var_name = vim.fn.input 'Variable name: '
+  if var_name == '' then
+    print 'No variable name provided. Aborting.'
+    return
+  end
+
+  -- Prompt for the error message (optional)
+  local err_msg = vim.fn.input 'Error message (optional): '
+
+  -- Construct the Go code
+  local go_code = {}
+  table.insert(go_code, var_name .. ', err := ') -- Variable declaration
+  table.insert(go_code, '') -- Placeholder for cursor position
+  table.insert(go_code, 'if err != nil {') -- Error check
+  if err_msg ~= '' then
+    table.insert(go_code, '\tlog.Fatal("' .. err_msg .. '", err)') -- Error message
+  else
+    table.insert(go_code, '\tlog.Fatal(err)') -- Default error handling
+  end
+  table.insert(go_code, '}')
+
+  -- Insert the Go code at the current cursor position
+  local current_line = vim.api.nvim_win_get_cursor(0)[1] -- Get current line number
+  vim.api.nvim_buf_set_lines(0, current_line - 1, current_line, false, go_code)
+
+  -- Move the cursor to the correct position (after `:=`)
+  local cursor_line = current_line
+  local cursor_col = #(var_name .. ', err := ')
+  vim.api.nvim_win_set_cursor(0, { cursor_line, cursor_col })
+end
+
+-- Map the function to <leader>ge (leader + g + e) for Go error handling
+vim.api.nvim_set_keymap('n', '<leader>gge', ':lua _G.go_error_handling()<CR>', { noremap = true, silent = true })
+--- end of func
+--- end of go
+--- start of js
+--- start of func
+-- Define a global Lua function for printing variables/expressions in JavaScript
+function _G.print_variable_javascript()
+  -- Prompt the user for input
+  local input = vim.fn.input 'Argument to print: '
+
+  -- Escape backticks to prevent syntax errors in template literals
+  local escaped_input = input:gsub('`', '\\`')
+
+  -- Determine the print statement
+  local print_statement = 'console.log(`' .. escaped_input .. ': ${' .. escaped_input .. '}`);'
+
+  -- Get the current line and cursor position
+  local current_line = vim.api.nvim_get_current_line()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local row, col = cursor_pos[1], cursor_pos[2]
+
+  -- Insert the print statement at the beginning of the current line
+  vim.api.nvim_set_current_line(print_statement .. '  ' .. current_line)
+
+  -- Move the cursor to the end of the inserted print statement
+  vim.api.nvim_win_set_cursor(0, { row, #print_statement + 2 })
+end
+
+-- Map the function to <leader>gjv (leader + g + j + v) for JavaScript
+vim.api.nvim_set_keymap('n', '<leader>gjv', ':lua _G.print_variable_javascript()<CR>', { noremap = true, silent = true })
+--- end of func
+--- end of js
+--- start of C
+--- start of function
+function _G.print_variable_c()
+  local input = vim.fn.input 'Argument to print: '
+
+  -- Escape double quotes
+  local escaped_input = input:gsub('"', '\\"')
+
+  -- Construct the print statement
+  local print_statement = 'printf("' .. escaped_input .. ' = %d\\n", ' .. escaped_input .. ');'
+
+  -- Insert and position cursor
+  local current_line = vim.api.nvim_get_current_line()
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+  vim.api.nvim_set_current_line(print_statement .. '  ' .. current_line)
+  vim.api.nvim_win_set_cursor(0, { row, #print_statement + 2 })
+end
+
+vim.api.nvim_set_keymap('n', '<leader>gcv', ':lua _G.print_variable_c()<CR>', { noremap = true, silent = true })
+
+--- end of function
+--- end of C
+
+--- for vscode colorscheme night/day
+-- Function to toggle between light and dark themes
+function _G.toggle_vscode_theme()
+  local current_theme = vim.g.vscode_theme or 'dark' -- Default to dark theme
+  if current_theme == 'dark' then
+    require('vscode').load 'light'
+    vim.g.vscode_theme = 'light'
+    print 'Switched to light theme'
+  else
+    require('vscode').load 'dark'
+    vim.g.vscode_theme = 'dark'
+    print 'Switched to dark theme'
+  end
+end
+
+-- Map the function to a keybinding (e.g., <Leader>tt)
+vim.api.nvim_set_keymap('n', '<Leader>gz', '<cmd>lua _G.toggle_vscode_theme()<CR>', { noremap = true, silent = true })
+
+-- for Git
+_G.git_commit_and_reload = function()
+  -- Save the current file
+  vim.cmd 'w'
+
+  -- Get the current file's directory
+  local file_dir = vim.fn.expand '%:p:h' -- Directory of the current file
+  vim.fn.chdir(file_dir) -- Change to the file's directory
+
+  -- Get the current time and file location for the default commit message
+  local time = os.date '%Y-%m-%d %H:%M:%S'
+  local file_location = vim.fn.expand '%:p' -- Full path of the current file
+  local default_commit_message = string.format('Committed from Vim at %s - %s', time, file_location)
+
+  -- Ask for a commit message (default will be used if input is empty)
+  local commit_message = vim.fn.input("Commit message (default: '" .. default_commit_message .. "'): ")
+  if commit_message == '' then
+    commit_message = default_commit_message
+  end
+
+  -- Show which files are staged for commit and which are unchanged
+  local git_status = vim.fn.system 'git status --short'
+  local staged_files = {}
+  local unchanged_files = {}
+
+  for line in git_status:gmatch '[^\r\n]+' do
+    if line:match '^%s*[MADRC]' then -- Staged files (Modified, Added, Deleted, Renamed, Copied)
+      table.insert(staged_files, line)
+    elseif line:match '^%s*%?%?' then -- Untracked files
+      table.insert(unchanged_files, line)
+    end
+  end
+
+  -- Display the staged and unchanged files
+  print '\nStaged files for commit:'
+  for _, file in ipairs(staged_files) do
+    print('  ' .. file)
+  end
+
+  print '\nUnchanged/untracked files:'
+  for _, file in ipairs(unchanged_files) do
+    print('  ' .. file)
+  end
+
+  -- Ask for confirmation
+  local confirm = vim.fn.input "\nProceed with commit? (Press 'n' to cancel, or just Enter to proceed): "
+  if confirm:lower() == 'n' then
+    print 'Commit canceled.'
+    return
+  end
+
+  -- Git add everything
+  vim.fn.system 'git add .'
+
+  -- Git commit with the provided or default message
+  local git_commit_result = vim.fn.system('git commit -m "' .. commit_message .. '"')
+  print('Git commit result: ' .. git_commit_result)
+
+  -- Reload the file
+  vim.cmd 'e!'
+end
+
+-- Map the function to a keybinding (e.g., <Leader>tt)
+vim.api.nvim_set_keymap('n', '<Leader>g!', '<cmd>lua _G.git_commit_and_reload()<CR>', { noremap = true, silent = true })
+
+-- vim.cmd 'Copilot disable'
+
+-- Copilot toggle function
+-- local copilot_enabled = false
+
+-- function ToggleCopilot()
+--   if copilot_enabled then
+--     vim.cmd 'Copilot disable'
+--     copilot_enabled = false
+--     print 'Copilot disabled'
+--   else
+--     vim.cmd 'Copilot enable'
+--     copilot_enabled = true
+--     print 'Copilot enabled'
+--   end
+-- end
+
+-- Keymap to toggle Copilot with <leader>g0
+-- vim.keymap.set('n', '<leader>g0', ToggleCopilot, { noremap = true, silent = true })
+
+-- vim.cmd 'colorscheme minicyan'
+require('lspconfig').ruff.setup {
+  init_options = {
+    settings = {
+      hover = true, -- Enable hover info
+    },
+  },
+}
